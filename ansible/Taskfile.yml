@@ -1,0 +1,7 @@
+version: 3
+
+tasks:
+  provision:
+    desc: "Provision the ASUS server with Ansible"
+    cmds:
+      - ansible-playbook playbooks/asus-server.yml

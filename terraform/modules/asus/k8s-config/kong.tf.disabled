@@ -1,0 +1,24 @@
+resource "kubernetes_namespace_v1" "kong_system" {
+  metadata {
+    name = "kong-system"
+  }
+}
+
+resource "helm_release" "kong_operator" {
+  name             = "kong-operator"
+  repository       = "https://charts.konghq.com"
+  chart            = "gateway-operator"
+  namespace        = kubernetes_namespace_v1.kong_system.metadata[0].name
+  create_namespace = false
+  cleanup_on_fail  = true
+  upgrade_install  = true
+
+  values = [
+    <<YAML
+image:
+  tag: 2.0.5
+env:
+  ENABLE_CONTROLLER_KONNECT: true
+YAML
+  ]
+}

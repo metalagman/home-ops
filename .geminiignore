@@ -1,0 +1,4 @@
+.git
+**/*.tfvars
+**/.env
+**/*.env

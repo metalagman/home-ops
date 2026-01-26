@@ -1,0 +1,11 @@
+- name: Install Docker
+  ansible.builtin.import_tasks: install_docker.yml
+
+- name: Install common development tools
+  ansible.builtin.import_tasks: install_devtools.yml
+
+- name: Install Kubernetes tools
+  ansible.builtin.import_tasks: install_kubernetes.yml
+
+- name: Initialize Kubernetes Cluster
+  ansible.builtin.import_tasks: init_kubernetes.yml

@@ -1,0 +1,8 @@
+---
+- name: Setup ASUS Server environment
+  hosts: asus-server
+  become: true
+
+  roles:
+    - common
+    # Add other roles as needed

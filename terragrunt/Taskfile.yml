@@ -1,0 +1,46 @@
+version: 3
+
+env:
+  TERRAGRUNT_WORKING_DIR: "{{.USER_WORKING_DIR}}"
+  TG_WORKING_DIR: "{{.USER_WORKING_DIR}}"
+
+dotenv: [
+  '{{.TASKFILE_DIR}}/.env',
+  '{{.TERRAGRUNT_WORKING_DIR}}/.env',
+  '{{.TERRAGRUNT_WORKING_DIR}}/../.env'
+]
+
+tasks:
+  terragrunt:
+    dotenv: [
+      '{{.TASKFILE_DIR}}/.env',
+      '{{.TERRAGRUNT_WORKING_DIR}}/.env',
+      '{{.TERRAGRUNT_WORKING_DIR}}/../.env'
+    ]
+    desc: "Run Terragrunt with .env support"
+    cmds:
+      - terragrunt run -- {{.CLI_ARGS}}
+    silent: false
+  bootstrap:
+    dotenv: [
+      '{{.TASKFILE_DIR}}/.env',
+      '{{.TERRAGRUNT_WORKING_DIR}}/.env',
+      '{{.TERRAGRUNT_WORKING_DIR}}/../.env'
+    ]
+    desc: "Run Terragrunt with .env support"
+    cmds:
+      - terragrunt backend bootstrap
+    silent: false
+  testenv:
+    dotenv: [
+      '{{.TASKFILE_DIR}}/.env',
+      '{{.TERRAGRUNT_WORKING_DIR}}/.env',
+      '{{.TERRAGRUNT_WORKING_DIR}}/../.env'
+    ]
+    desc: "Run Terragrunt with .env support"
+    cmds:
+      - echo '{{.TASKFILE_DIR}}/.env',
+      - echo '{{.TERRAGRUNT_WORKING_DIR}}/.env',
+      - echo '{{.TERRAGRUNT_WORKING_DIR}}/../.env'
+      - echo $AWS_PROFILE
+    silent: false

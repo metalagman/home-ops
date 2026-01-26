@@ -1,0 +1,22 @@
+locals {
+  metrics_server_url = "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml"
+}
+
+# 1) Download the release bundle (same thing as kubectl apply -f URL)
+data "http" "metrics_server" {
+  url = local.metrics_server_url
+}
+
+# 2) Split multi-doc YAML into individual manifests
+data "kubectl_file_documents" "metrics_server" {
+  content = data.http.metrics_server.response_body
+}
+
+# 3) Apply every document
+resource "kubectl_manifest" "metrics_server" {
+  for_each  = data.kubectl_file_documents.metrics_server.manifests
+  yaml_body = each.value
+
+  # Equivalent intent to: kubectl apply --server-side ...
+  server_side_apply = true
+}

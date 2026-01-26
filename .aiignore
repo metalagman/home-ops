@@ -1,0 +1,14 @@
+.git
+**/*.tfvars
+**/*.tfvars.json
+**/*.tfstate
+**/*.tfstate.*
+**/.terraform/
+**/.terragrunt-cache/
+**/.task/
+**/.env
+**/*.env
+**/terragrunt-debug.tfvars.json
+**/.vscode/
+**/.idea/
+**/*.retry

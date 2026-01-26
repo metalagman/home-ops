@@ -1,0 +1,39 @@
+resource "kubernetes_namespace_v1" "openebs" {
+  metadata {
+    name = "openebs"
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+  }
+}
+
+resource "helm_release" "openebs" {
+  name             = "openebs"
+  repository       = "https://openebs.github.io/openebs"
+  chart            = "openebs"
+  version          = "4.4.0"
+  namespace        = kubernetes_namespace_v1.openebs.metadata[0].name
+  create_namespace = false
+  cleanup_on_fail  = true
+  upgrade_install  = true
+  wait             = true
+  atomic           = true
+  timeout          = 600
+
+  # OpenEBS 4.x is an umbrella chart.
+  # We enable the localpv-provisioner which is the most common use case for home labs.
+  set = [
+    {
+      name  = "localpv-provisioner.enabled"
+      value = "true"
+    },
+    {
+      name  = "engines.localpv-hostpath.enabled"
+      value = "true"
+    },
+    {
+      name  = "engines.replicated.enabled"
+      value = "false"
+    }
+  ]
+}

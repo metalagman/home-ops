@@ -1,0 +1,23 @@
+- name: Update package cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install development tools
+  ansible.builtin.apt:
+    name: "{{ dev_tools }}"
+    state: present
+  vars:
+    dev_tools:
+      - mc
+      - htop
+      - curl
+      - git
+      - build-essential
+      - dos2unix
+      - unzip
+      - gpg
+      - ffmpeg
+      - tree
+      - vim
+      - wget

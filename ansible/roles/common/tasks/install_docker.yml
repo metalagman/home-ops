@@ -1,0 +1,120 @@
+- name: Common | Docker | Ensure legacy Docker repository is absent
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/docker.list
+    state: absent
+  become: true
+
+- name: Common | Docker | Install dependencies
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+    state: present
+  become: true
+
+- name: Common | Docker | Ensure /etc/apt/keyrings exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Common | Docker | Download Docker public key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+- name: Common | Docker | Add Docker repository (DEB822 format)
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/docker.sources
+    content: |
+      Types: deb
+      URIs: https://download.docker.com/linux/ubuntu
+      Suites: {{ ansible_distribution_release }}
+      Components: stable
+      Signed-By: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+- name: Common | Docker | Install Docker Engine
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+  become: true
+
+- name: Common | Docker | Ensure Docker service is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Common | Docker | Configure Docker to use systemd cgroup driver
+  ansible.builtin.copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+      }
+    mode: '0644'
+  register: docker_config
+  become: true
+
+- name: Common | Docker | Restart Docker if config changed
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+  when: docker_config.changed
+  become: true
+
+- name: Common | Containerd | Ensure /etc/containerd exists
+  ansible.builtin.file:
+    path: /etc/containerd
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Common | Containerd | Generate default config
+  ansible.builtin.shell:
+    cmd: containerd config default > /etc/containerd/config.toml
+  args:
+    creates: /etc/containerd/config.toml
+  become: true
+
+- name: Common | Containerd | Enable SystemdCgroup
+  ansible.builtin.replace:
+    path: /etc/containerd/config.toml
+    regexp: '(\[plugins\."io\.containerd\.grpc\.v1\.cri"\.containerd\.runtimes\.runc\.options\]\n(?:.*\n)*?.*)SystemdCgroup = false'
+    replace: '\1SystemdCgroup = true'
+  become: true
+  register: containerd_config
+
+- name: Common | Containerd | Enable CRI plugin
+  ansible.builtin.replace:
+    path: /etc/containerd/config.toml
+    regexp: 'disabled_plugins = \["cri"\]'
+    replace: '# disabled_plugins = ["cri"]'
+  become: true
+  register: containerd_cri_config
+
+- name: Common | Containerd | Restart containerd
+  ansible.builtin.service:
+    name: containerd
+    state: restarted
+  when: containerd_config.changed or containerd_cri_config.changed
+  become: true
+
+- name: Common | Docker | Add bigboss to docker group
+  ansible.builtin.user:
+    name: bigboss
+    groups: docker
+    append: true
