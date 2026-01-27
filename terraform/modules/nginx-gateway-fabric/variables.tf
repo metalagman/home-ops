@@ -15,3 +15,9 @@ variable "service_type" {
   type        = string
   default     = "LoadBalancer"
 }
+
+variable "chart_version" {
+  description = "Helm chart version for NGINX Gateway Fabric"
+  type        = string
+  default     = "2.4.0"
+}

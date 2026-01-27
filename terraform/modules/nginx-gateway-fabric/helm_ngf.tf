@@ -2,6 +2,7 @@ resource "helm_release" "nginx_gateway_fabric" {
   name       = var.helm_release_name
   repository = "oci://ghcr.io/nginx/charts"
   chart      = "nginx-gateway-fabric"
+  version    = var.chart_version
   namespace  = var.namespace
 
   set = [
