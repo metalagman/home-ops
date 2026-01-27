@@ -10,14 +10,23 @@ variable "helm_release_name" {
   default     = "ngf"
 }
 
-variable "service_type" {
-  description = "Service type for the NGINX Gateway Fabric"
+variable "chart_version" {
+  description = "Version of the NGINX Gateway Fabric chart"
   type        = string
-  default     = "LoadBalancer"
+  default     = "2.3.0"
 }
 
-variable "chart_version" {
-  description = "Helm chart version for NGINX Gateway Fabric"
-  type        = string
-  default     = "2.4.0"
+variable "chart_values" {
+  description = "Additional values to pass to the Helm chart"
+  type        = list(string)
+  default     = []
+}
+
+variable "chart_set" {
+  description = "Additional set values to pass to the Helm chart"
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
 }

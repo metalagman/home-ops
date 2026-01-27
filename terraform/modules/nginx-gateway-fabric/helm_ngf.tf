@@ -5,12 +5,8 @@ resource "helm_release" "nginx_gateway_fabric" {
   version    = var.chart_version
   namespace  = var.namespace
 
-  set = [
-    {
-      name  = "nginx.service.type"
-      value = var.service_type
-    }
-  ]
+  values = var.chart_values
+  set = var.chart_set
 
   # The issue description uses --create-namespace, but we already have a kubernetes_namespace_v1 resource.
   # So we don't need create_namespace = true here, but we must depend on it.
