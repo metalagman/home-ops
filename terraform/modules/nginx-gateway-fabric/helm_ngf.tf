@@ -6,13 +6,14 @@ resource "helm_release" "nginx_gateway_fabric" {
   namespace  = var.namespace
 
   values = var.chart_values
-  set = var.chart_set
+  set    = var.chart_set
 
   # The issue description uses --create-namespace, but we already have a kubernetes_namespace_v1 resource.
   # So we don't need create_namespace = true here, but we must depend on it.
 
   depends_on = [
     kubernetes_namespace_v1.nginx_gateway,
+    kubectl_manifest.nginx_gateway_fabric_crds,
     kubectl_manifest.nginx_gateway_server_cert,
     kubectl_manifest.nginx_agent_client_cert
   ]

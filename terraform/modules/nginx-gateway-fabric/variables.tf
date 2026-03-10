@@ -13,7 +13,13 @@ variable "helm_release_name" {
 variable "chart_version" {
   description = "Version of the NGINX Gateway Fabric chart"
   type        = string
-  default     = "2.3.0"
+  default     = "2.4.2"
+}
+
+variable "crd_version" {
+  description = "Git tag for NGINX Gateway Fabric CRDs from config/crd"
+  type        = string
+  default     = "v2.4.2"
 }
 
 variable "chart_values" {
