@@ -20,7 +20,7 @@ resource "helm_release" "tailscale_operator" {
   name             = "tailscale-operator"
   repository       = "https://pkgs.tailscale.com/helmcharts"
   chart            = "tailscale-operator"
-  version          = "1.92.5"
+  version          = "1.94.2"
   namespace        = kubernetes_namespace_v1.tailscale.metadata[0].name
   create_namespace = false
   cleanup_on_fail  = true
