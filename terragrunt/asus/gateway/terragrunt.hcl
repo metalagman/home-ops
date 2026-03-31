@@ -1,5 +1,5 @@
 terraform {
-  source = "../../../terraform/modules/asus/k8s-operators"
+  source = "../../../terraform/modules//asus/gateway"
 }
 
 include "root" {
@@ -11,7 +11,11 @@ include "kubernetes_provider" {
   path = "${get_terragrunt_dir()}/../../_providers/kubernetes.hcl"
 }
 
-dependency "k8s-config" {
-  config_path = "../k8s-config"
+include "kubectl_provider" {
+  path = "${get_terragrunt_dir()}/../../_providers/kubectl.hcl"
+}
+
+dependency "k8s-operators" {
+  config_path  = "../k8s-operators"
   skip_outputs = true
 }
