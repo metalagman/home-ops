@@ -1,46 +1,33 @@
-variable "tailscale_oauth_client_id" {
-  description = "Tailscale OAuth Client ID"
-  type        = string
-  sensitive   = true
-}
-
-variable "tailscale_oauth_client_secret" {
-  description = "Tailscale OAuth Client Secret"
-  type        = string
-  sensitive   = true
-}
-
-variable "metallb_ip_address_pool_name" {
+variable "ip_address_pool_name" {
   description = "Name of the MetalLB IPAddressPool."
   type        = string
   default     = "default"
 }
 
-variable "metallb_ip_address_pool_addresses" {
+variable "ip_address_pool_addresses" {
   description = "Address ranges MetalLB can allocate from (CIDR or start-end range)."
   type        = list(string)
-  default     = ["192.168.31.240-192.168.31.250"]
 }
 
-variable "metallb_ip_address_pool_auto_assign" {
+variable "ip_address_pool_auto_assign" {
   description = "Whether MetalLB should auto-assign IPs from this pool."
   type        = bool
   default     = true
 }
 
-variable "metallb_l2_advertisement_name" {
+variable "l2_advertisement_name" {
   description = "Name of the MetalLB L2Advertisement."
   type        = string
   default     = "default"
 }
 
-variable "metallb_l2_interfaces" {
+variable "l2_interfaces" {
   description = "Network interfaces on which MetalLB should send L2 announcements."
   type        = list(string)
   default     = []
 }
 
-variable "metallb_load_balancer_class" {
+variable "load_balancer_class" {
   description = "loadBalancerClass value configured for MetalLB controller/speaker."
   type        = string
   default     = "metallb.io/metallb"

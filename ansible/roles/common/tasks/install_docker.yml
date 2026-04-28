@@ -59,6 +59,7 @@
     content: |
       {
         "exec-opts": ["native.cgroupdriver=systemd"],
+        "insecure-registries": ["192.168.31.130:5000"],
         "log-driver": "json-file",
         "log-opts": {
           "max-size": "100m"
@@ -79,6 +80,13 @@
 - name: Common | Containerd | Ensure /etc/containerd exists
   ansible.builtin.file:
     path: /etc/containerd
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Common | Containerd | Ensure /etc/containerd/certs.d exists
+  ansible.builtin.file:
+    path: /etc/containerd/certs.d
     state: directory
     mode: '0755'
   become: true
@@ -106,11 +114,40 @@
   become: true
   register: containerd_cri_config
 
+- name: Common | Containerd | Configure registry config path
+  ansible.builtin.blockinfile:
+    path: /etc/containerd/config.toml
+    marker: "# {mark} ANSIBLE MANAGED REGISTRY CONFIG"
+    block: |
+      [plugins."io.containerd.cri.v1.images".registry]
+        config_path = "/etc/containerd/certs.d"
+  become: true
+  register: containerd_registry_config
+
+- name: Common | Containerd | Ensure registry host config directory exists
+  ansible.builtin.file:
+    path: /etc/containerd/certs.d/192.168.31.130_5000_
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Common | Containerd | Configure insecure registry host
+  ansible.builtin.copy:
+    dest: /etc/containerd/certs.d/192.168.31.130_5000_/hosts.toml
+    content: |
+      server = "http://192.168.31.130:5000"
+
+      [host."http://192.168.31.130:5000"]
+        capabilities = ["pull", "resolve", "push"]
+    mode: '0644'
+  become: true
+  register: containerd_registry_host_config
+
 - name: Common | Containerd | Restart containerd
   ansible.builtin.service:
     name: containerd
     state: restarted
-  when: containerd_config.changed or containerd_cri_config.changed
+  when: containerd_config.changed or containerd_cri_config.changed or containerd_registry_config.changed or containerd_registry_host_config.changed
   become: true
 
 - name: Common | Docker | Add bigboss to docker group

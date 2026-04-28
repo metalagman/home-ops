@@ -1,5 +1,5 @@
 terraform {
-  source = "../../../terraform/modules/asus/k8s-config"
+  source = "../../../terraform/modules//asus/k8s-config"
 }
 
 include "root" {
@@ -18,4 +18,12 @@ include "kubectl_provider" {
 inputs = {
   tailscale_oauth_client_id     = get_env("TAILSCALE_OAUTH_CLIENT_ID")
   tailscale_oauth_client_secret = get_env("TAILSCALE_OAUTH_CLIENT_SECRET")
+  metallb_load_balancer_class   = "metallb.io/metallb"
+  metallb_ip_address_pool_auto_assign = true
+  metallb_ip_address_pool_addresses = [
+    "192.168.31.128-192.168.31.140",
+  ]
+  metallb_l2_interfaces = [
+    "wlp3s0",
+  ]
 }

@@ -42,3 +42,45 @@ variable "nginx_gateway_fabric_chart_set" {
   }))
   default = []
 }
+
+variable "postgres_operator_enabled" {
+  description = "Whether to install the Zalando Postgres Operator."
+  type        = bool
+  default     = true
+}
+
+variable "postgres_operator_namespace" {
+  description = "Namespace for the Zalando Postgres Operator."
+  type        = string
+  default     = "postgres-operator"
+}
+
+variable "postgres_operator_chart_version" {
+  description = "Helm chart version for the Zalando Postgres Operator."
+  type        = string
+  default     = "1.11.0"
+}
+
+variable "postgres_operator_values" {
+  description = "Additional values for the Zalando Postgres Operator Helm chart."
+  type        = list(string)
+  default     = []
+}
+
+variable "postgres_operator_ui_enabled" {
+  description = "Whether to install the Zalando Postgres Operator UI."
+  type        = bool
+  default     = true
+}
+
+variable "postgres_operator_ui_chart_version" {
+  description = "Helm chart version for the Zalando Postgres Operator UI."
+  type        = string
+  default     = "1.11.0"
+}
+
+variable "postgres_operator_ui_values" {
+  description = "Additional values for the Zalando Postgres Operator UI Helm chart."
+  type        = list(string)
+  default     = []
+}

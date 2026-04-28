@@ -31,7 +31,7 @@ openebs-crds:
 engines:
   local:
     lvm:
-      enabled: false
+      enabled: true
     zfs:
       enabled: false
     rawfile:
@@ -70,4 +70,26 @@ preUpgradeHook:
   enabled: false
 YAML
   ]
+}
+
+resource "kubectl_manifest" "openebs_hdd_lvm_storage_class" {
+  depends_on = [helm_release.openebs]
+
+  yaml_body = <<-YAML
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-hdd-lvm
+provisioner: local.csi.openebs.io
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+parameters:
+  storage: "lvm"
+  volgroup: "openebs-hdd-vg"
+  fsType: "ext4"
+YAML
+
+  server_side_apply = true
+  force_conflicts   = true
 }

@@ -1,19 +1,30 @@
-resource "kubernetes_namespace_v1" "metallb_system" {
-  metadata {
-    name = "metallb-system"
-  }
+module "metallb" {
+  source = "../../metallb"
+
+  load_balancer_class         = var.metallb_load_balancer_class
+  ip_address_pool_name        = var.metallb_ip_address_pool_name
+  ip_address_pool_addresses   = var.metallb_ip_address_pool_addresses
+  ip_address_pool_auto_assign = var.metallb_ip_address_pool_auto_assign
+  l2_advertisement_name       = var.metallb_l2_advertisement_name
+  l2_interfaces               = var.metallb_l2_interfaces
 }
 
-resource "helm_release" "metallb" {
-  name             = "metallb"
-  repository       = "https://metallb.github.io/metallb"
-  chart            = "metallb"
-  version          = "0.15.3"
-  namespace        = kubernetes_namespace_v1.metallb_system.metadata[0].name
-  create_namespace = false
-  cleanup_on_fail  = true
-  upgrade_install  = true
-  wait             = true
-  atomic           = true
-  timeout          = 300
+moved {
+  from = kubernetes_namespace_v1.metallb_system
+  to   = module.metallb.kubernetes_namespace_v1.metallb_system
+}
+
+moved {
+  from = helm_release.metallb
+  to   = module.metallb.helm_release.metallb
+}
+
+moved {
+  from = kubectl_manifest.metallb_ip_address_pool
+  to   = module.metallb.kubectl_manifest.metallb_ip_address_pool
+}
+
+moved {
+  from = kubectl_manifest.metallb_l2_advertisement
+  to   = module.metallb.kubectl_manifest.metallb_l2_advertisement
 }

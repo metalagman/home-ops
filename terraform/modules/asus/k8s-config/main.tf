@@ -17,7 +17,7 @@ terraform {
       version = "~> 3.4"
     }
     kubectl = {
-      source  = "gavinbunney/kubectl"
+      source = "gavinbunney/kubectl"
       # pick a version you already use; examples online often reference ~1.14.x
       version = ">= 1.19.0"
     }
