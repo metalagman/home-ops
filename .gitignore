@@ -43,3 +43,5 @@ terragrunt-debug.tfvars.json
 
 # Ansible retries
 *.retry
+
+.codex/
