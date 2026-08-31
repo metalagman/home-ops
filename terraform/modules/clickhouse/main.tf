@@ -86,6 +86,12 @@ spec:
       requests:
         storage: "${var.clickhouse_storage_size}"
   settings:
+    logger:
+      level: information
+      logToFile: true
+      jsonLogs: false
+      size: 100M
+      count: 5
     extraConfig:
       storage_configuration:
         disks:
