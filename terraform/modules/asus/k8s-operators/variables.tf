@@ -43,6 +43,18 @@ variable "nginx_gateway_fabric_chart_set" {
   default = []
 }
 
+variable "reloader_namespace" {
+  description = "Namespace for the Stakater Reloader controller."
+  type        = string
+  default     = "reloader"
+}
+
+variable "reloader_chart_version" {
+  description = "Helm chart version for Stakater Reloader."
+  type        = string
+  default     = "2.2.14"
+}
+
 variable "postgres_operator_enabled" {
   description = "Whether to install the Zalando Postgres Operator."
   type        = bool

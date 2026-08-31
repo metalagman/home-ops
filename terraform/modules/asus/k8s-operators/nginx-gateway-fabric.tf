@@ -10,6 +10,12 @@ module "nginx_gateway_fabric" {
   chart_values = [
     <<-EOF
     nginx:
+      patches:
+        - type: StrategicMerge
+          value:
+            metadata:
+              annotations:
+                secret.reloader.stakater.com/auto: "true"
       config:
         rewriteClientIP:
           mode: XForwardedFor
@@ -25,5 +31,24 @@ module "nginx_gateway_fabric" {
       snippetsFilters:
         enable: true
     EOF
+  ]
+}
+
+resource "kubernetes_annotations" "nginx_gateway_fabric_tls_reloader" {
+  api_version = "apps/v1"
+  kind        = "Deployment"
+
+  metadata {
+    name      = "${var.nginx_gateway_fabric_helm_release_name}-nginx-gateway-fabric"
+    namespace = var.nginx_gateway_fabric_namespace
+  }
+
+  annotations = {
+    "secret.reloader.stakater.com/auto" = "true"
+  }
+
+  depends_on = [
+    helm_release.reloader,
+    module.nginx_gateway_fabric,
   ]
 }
