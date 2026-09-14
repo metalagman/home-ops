@@ -1,0 +1,41 @@
+version: '3'
+
+vars:
+  PUBLIC_MODULE_DIRS: >-
+    terraform/modules/apis/gateway-api
+    terraform/modules/operators/argocd
+    terraform/modules/operators/cert-manager
+    terraform/modules/operators/clickhouse
+    terraform/modules/operators/metallb
+    terraform/modules/operators/nginx-gateway-fabric
+    terraform/modules/operators/openebs
+    terraform/modules/operators/postgres
+    terraform/modules/operators/reloader
+    terraform/modules/operators/tailscale
+
+tasks:
+  modules:fmt:
+    desc: Check formatting of public Terraform modules
+    cmds:
+      - terraform fmt -check -recursive terraform/modules/apis terraform/modules/operators
+
+  modules:validate:
+    desc: Initialize and validate every public Terraform module without a backend
+    deps: [modules:fmt]
+    cmds:
+      - |
+        set -eu
+        verify_root="$(mktemp -d "${TMPDIR:-/tmp}/home-ops-modules.XXXXXX")"
+        trap 'rm -rf "$verify_root"' EXIT
+        for module_dir in {{.PUBLIC_MODULE_DIRS}}; do
+          verify_module="$verify_root/$(printf '%s' "$module_dir" | tr / _)"
+          mkdir -p "$verify_module"
+          rsync -a --exclude=.terraform --exclude=.terraform.lock.hcl "$module_dir/" "$verify_module/"
+          terraform -chdir="$verify_module" init -backend=false -input=false
+          terraform -chdir="$verify_module" validate
+        done
+
+  modules:verify:
+    desc: Run all public Terraform module checks
+    cmds:
+      - task: modules:validate
