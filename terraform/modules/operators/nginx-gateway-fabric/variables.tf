@@ -25,7 +25,7 @@ variable "crd_version" {
 variable "values" {
   description = "Helm values documents, including deployment-specific data-plane configuration."
   type        = list(string)
-  default     = []
+  default     = null
 }
 
 variable "set" {
@@ -34,17 +34,35 @@ variable "set" {
     name  = string
     value = string
   }))
-  default = []
+  default = null
+}
+
+variable "cleanup_on_fail" {
+  description = "Whether Helm removes newly created resources after a failed operation."
+  type        = bool
+  default     = false
+}
+
+variable "atomic" {
+  description = "Whether failed Helm operations are rolled back atomically."
+  type        = bool
+  default     = false
+}
+
+variable "wait" {
+  description = "Whether Helm waits for release resources to become ready."
+  type        = bool
+  default     = true
 }
 
 variable "timeout" {
   description = "Helm operation timeout in seconds."
   type        = number
-  default     = 600
+  default     = 300
 }
 
 variable "max_history" {
   description = "Maximum Helm release history."
   type        = number
-  default     = 3
+  default     = 0
 }

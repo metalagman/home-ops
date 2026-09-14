@@ -140,9 +140,9 @@ resource "helm_release" "nginx_gateway_fabric" {
 
   namespace        = kubernetes_namespace_v1.nginx_gateway.metadata[0].name
   create_namespace = false
-  cleanup_on_fail  = true
-  atomic           = true
-  wait             = true
+  cleanup_on_fail  = var.cleanup_on_fail
+  atomic           = var.atomic
+  wait             = var.wait
   timeout          = var.timeout
   max_history      = var.max_history
 

@@ -28,7 +28,7 @@ variable "set" {
     name  = string
     value = string
   }))
-  default = []
+  default = null
 }
 
 variable "timeout" {

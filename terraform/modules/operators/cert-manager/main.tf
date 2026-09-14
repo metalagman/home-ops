@@ -15,9 +15,9 @@ resource "helm_release" "this" {
 
   namespace        = var.namespace
   create_namespace = true
-  cleanup_on_fail  = true
-  upgrade_install  = true
-  atomic           = true
+  cleanup_on_fail  = var.cleanup_on_fail
+  upgrade_install  = var.upgrade_install
+  atomic           = var.atomic
   wait             = true
   timeout          = var.timeout
   max_history      = var.max_history
@@ -42,6 +42,6 @@ resource "helm_release" "this" {
         value = tostring(var.enable_gateway_api)
       },
     ],
-    var.set,
+    coalesce(var.set, []),
   )
 }

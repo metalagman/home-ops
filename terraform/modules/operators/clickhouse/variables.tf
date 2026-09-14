@@ -19,7 +19,7 @@ variable "chart_version" {
 variable "values" {
   description = "Helm values documents."
   type        = list(string)
-  default     = []
+  default     = null
 }
 
 variable "set" {
@@ -28,7 +28,7 @@ variable "set" {
     name  = string
     value = string
   }))
-  default = []
+  default = null
 }
 
 variable "timeout" {

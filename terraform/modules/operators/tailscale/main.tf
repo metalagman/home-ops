@@ -40,7 +40,7 @@ resource "helm_release" "this" {
   create_namespace = false
   cleanup_on_fail  = true
   upgrade_install  = true
-  atomic           = true
+  atomic           = var.atomic
   wait             = true
   timeout          = var.timeout
   max_history      = var.max_history

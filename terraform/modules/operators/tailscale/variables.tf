@@ -43,7 +43,7 @@ variable "chart_version" {
 variable "values" {
   description = "Additional Helm values documents."
   type        = list(string)
-  default     = []
+  default     = null
 }
 
 variable "set" {
@@ -52,7 +52,13 @@ variable "set" {
     name  = string
     value = string
   }))
-  default = []
+  default = null
+}
+
+variable "atomic" {
+  description = "Whether failed Helm operations are rolled back atomically."
+  type        = bool
+  default     = false
 }
 
 variable "timeout" {
@@ -64,5 +70,5 @@ variable "timeout" {
 variable "max_history" {
   description = "Maximum Helm release history."
   type        = number
-  default     = 3
+  default     = 0
 }
